@@ -1,0 +1,14 @@
+<h1>Feedback for Faculty</h1>
+<table>
+    <tr>
+        <th>Rating</th>
+        <th>Date</th>
+    </tr>
+    {% for feedback in feedbacks %}
+        <tr>
+            <td>{{ feedback[2] }}</td>
+            <td>{{ feedback[3] }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>

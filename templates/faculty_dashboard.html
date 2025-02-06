@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <h2>Faculty Dashboard</h2>
+        <div class="user-info">
+            <h3>Welcome, {{ session.get('username') }}</h3>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+
+        <div class="section">
+            <h3>My Timetable</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Time Slot</th>
+                        <th>Course</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for slot in timetable %}
+                    <tr>
+                        <td>{{ slot.Day }}</td>
+                        <td>{{ slot.Timeslot }}</td>
+                        <td>{{ slot.Course_Name }}</td>
+                        <td>{{ slot.Room_No }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+
+        <div class="section">
+            <h3>Leave Information</h3>
+            <p>Max Leaves: 5</p>
+            <p>Available Leaves: {{ available_leaves }}</p>
+            {% if available_leaves <= 0 %}
+            <p style="color: red;">No available leaves left. Contact admin to reset leaves.</p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <h3>Leave Requests</h3>
+            <button onclick="showLeaveForm()" class="action-btn">Apply for Leave</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.Leave_Date }}</td>
+                        <td>{{ leave.Approval_Status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .leave-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .leave-modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <!-- Leave Application Modal -->
+    <div id="leaveModal" class="leave-modal">
+        <div class="leave-modal-content">
+            <h3>Apply for Leave</h3>
+            <form id="leaveForm" onsubmit="submitLeave(event)">
+                <div>
+                    <label>Leave Date:</label>
+                    <input type="date" id="leaveDate" required>
+                </div>
+                <button type="submit">Submit</button>
+                <button type="button" onclick="hideLeaveForm()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

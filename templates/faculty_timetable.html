@@ -1,0 +1,18 @@
+<h1>Your Timetable</h1>
+<table>
+    <tr>
+        <th>Course ID</th>
+        <th>Room No</th>
+        <th>Timeslot</th>
+        <th>Day</th>
+    </tr>
+    {% for row in timetable %}
+        <tr>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('faculty_dashboard') }}">Back to Dashboard</a>

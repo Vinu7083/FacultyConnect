@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h2>Admin Dashboard</h2>
+            <div class="user-info">
+                <span>Welcome, {{ session.get('username') }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+
+        <!-- Faculties Section -->
+        <div class="section">
+            <h3>Faculties</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Phone</th>
+                        <th>Joining Date</th>
+                        <th>Courses</th>
+                        <th>Available Leaves</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for faculty in faculties %}
+                    <tr>
+                        <td>{{ faculty.Faculty_id }}</td>
+                        <td>{{ faculty.Faculty_Name }}</td>
+                        <td>{{ faculty.Designation }}</td>
+                        <td>{{ faculty.Phone_No }}</td>
+                        <td>{{ faculty.Joining_Date }}</td>
+                        <td>{{ faculty.Courses if faculty.Courses else 'No courses assigned' }}</td>
+                        <td>{{ faculty.available_leaves }}</td>
+                        <td>
+                            <button onclick="showAssignCourseModal({{ faculty.Faculty_id }})" class="action-btn">Assign
+                                Course</button>
+                            <button onclick="resetLeaves({{ faculty.Faculty_id }})" class="action-btn">Reset
+                                Leaves</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Leave Requests Section -->
+        <div class="section">
+            <h3>Leave Requests</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Faculty Name</th>
+                        <th>Leave Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leave_requests %}
+                    <tr>
+                        <td>{{ leave.Faculty_Name }}</td>
+                        <td>{{ leave.Leave_Date }}</td>
+                        <td>{{ leave.Approval_Status }}</td>
+                        <td>
+                            <button onclick="approveLeave({{ leave.Leave_id }})"
+                                class="btn btn-success">Approve</button>
+                            <button onclick="rejectLeave({{ leave.Leave_id }})" class="btn btn-danger">Reject</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal for Assigning Course -->
+        <div id="assignCourseModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Assign Course</h3>
+                <form id="assignCourseForm" action="{{ url_for('assign_course') }}" method="POST" onsubmit="return assignCourse(event)">
+                    <input type="hidden" id="facultyId" name="facultyId"> <!-- Hidden field for faculty_id -->
+                    <div class="form-group">
+                        <label for="courseId">Course ID:</label>
+                        <input type="number" id="courseId" name="courseId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseName">Course Name:</label>
+                        <input type="text" id="courseName" name="courseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="semester">Semester:</label>
+                        <input type="number" id="semester" name="semester" min="1" max="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseCredits">Credits:</label>
+                        <input type="number" id="courseCredits" name="courseCredits" min="1" required>
+                    </div>
+                    <button type="submit" onclick="return validateForm()">Assign</button>
+                </form>
+            </div>
+        </div>
+
+        
+    <div class="dashboard-section">
+        <h2>Faculty Feedback Overview</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Faculty Name</th>
+                    <th>Rating</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feedback in feedbacks %}
+                <tr>
+                    <td>{{ feedback.Faculty_Name }}</td>
+                    <td class="rating">{{ feedback.Rating }}/5</td>
+                    <td>{{ feedback.Date.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <style>
+    .dashboard-section {
+        margin: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .data-table th, .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .data-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+
+    .rating {
+        font-weight: bold;
+        color: #4CAF50;
+    }
+    </style>
+
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
